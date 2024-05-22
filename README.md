@@ -38,3 +38,12 @@ Fan fiction will be collected from Archive of Our Own, filtered by tags to ensur
 
 Data cleaning is necessary, especially to remove metadata and HTML tags. Fan works may utilize established characters and locations from Austen's novels, potentially inflating model performance. To address this, modifications will be made to character and location names, and models will be trained on both original and modified texts for comparison.
 
+---------------------------------------------------------------
+
+## Data Acquisition and Cleaning
+
+### Novels of Jane Austen from Project Gutenberg
+Project Gutenberg has a catalog file available for download. This file was searched to obtain metadata for the appropriate texts. Austen's novels were collected by Project Gutenberg, so some books had several versions available. When multiple English versions of a particular novel were available, the most recent file was chosen. The 'gutenbergpy' package was used with the text id to retrieve the files and strip the header and footer information. Each book was written to a text file with the text id as the file name. The metadata was written to a csv file.
+
+### Fan Fiction Works based on Jane Austen
+Fan fiction works published on the website 'Archive of Our Own' (AO3) were collected for this project. Several search parameters were used to hone in on works most suitable for this project including eliminating works under 5000 words and incomplete works. In addition, the available tags were used to select works that most closely resembled the original setting of Austen's novels, so stories with modern settings or fantastical elements were also excluded. 350 stories met all the criteria and the metadata was collected using the 'ao3downloader' script. The work id was extracted from the data and used in a webscraping script; each story was extracted from the html formatting and saved as a text file with the work id as the file name. The metadata was saved as a csv file.
