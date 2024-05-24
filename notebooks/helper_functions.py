@@ -1,4 +1,4 @@
-def read_text(foldername:str, work_id:int):
+def read_text(foldername:str, work_id:str):
     '''
     Open text file in read-only mode.
     Input folder and work_id to retrieve contents.
