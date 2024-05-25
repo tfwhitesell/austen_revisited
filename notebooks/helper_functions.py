@@ -3,6 +3,7 @@ from nltk.corpus import stopwords
 from nltk.tokenize import regexp_tokenize
 from collections import Counter
 import re
+import numpy as np
 
 def get_stopwords():
     # additional stopwords specific to the corpus
@@ -37,7 +38,7 @@ def read_text(work_id:str):
 def get_counter(text:str):
     '''Create counter object from text.'''
     stop_words = get_stopwords()
-    # wnl = WordNetLemmatizer()
+    wnl = WordNetLemmatizer()
     text_counter = Counter([wnl.lemmatize(x.lower()) for x in regexp_tokenize(text, '[-\'\w]+') if x.lower() not in stop_words])
 
     return text_counter
