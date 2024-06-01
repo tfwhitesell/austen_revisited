@@ -4,6 +4,7 @@ from nltk.tokenize import regexp_tokenize
 from collections import Counter
 import re
 import numpy as np
+import random
 
 def get_stopwords():
     # additional stopwords specific to the corpus
@@ -110,3 +111,41 @@ def get_tokens(sent_text:str, token_size = 2000):
         token_word_count.append(np.char.count(token, ' ') + 1)
 
     return token_text, token_num, token_char_count, token_sent_count, token_word_count
+
+
+# get a percentage of a list with random choice
+def split_list_by_percent(input_list, percent):
+    # calculate number to pick 
+    pick_num = int(len(input_list) * percent / 100)
+    # pick random sample
+    train_ids = random.sample(input_list, pick_num)
+    # remaining values from original list
+    test_ids = [item for item in input_list if item not in train_ids]
+
+    return train_ids, test_ids
+
+
+# split text ids for train-test split so that an id is either in train or test
+def split_by_id(df, ja_split:int, ff_split:int):
+    train_ids = []
+    test_ids = []
+
+    # list of Austen texts
+    ja_ids = df[df['author'] == 'Austen, Jane']['text#'].tolist()
+
+    # ja_id split
+    ja_train, ja_test = split_list_by_percent(ja_ids, ja_split)
+
+    train_ids.extend(ja_train)
+    test_ids.extend(ja_test)
+
+    # subset df for fanfic
+    ff = df[df['author'] != 'Austen, Jane']
+
+    for cat in ff['text_length'].unique():
+        ff_ids = ff[ff['text_length'] == cat]['text#'].tolist()
+        ff_train_ids, ff_test_ids = split_list_by_percent(ff_ids, ff_split)
+        train_ids.extend(ff_train_ids)
+        test_ids.extend(ff_test_ids)
+    
+    return train_ids, test_ids
