@@ -1,6 +1,7 @@
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 from nltk.tokenize import regexp_tokenize, word_tokenize
+from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
 from collections import Counter
 import re
 import numpy as np
@@ -156,3 +157,14 @@ def split_by_id(df, ja_split:int, ff_split:int):
         test_ids.extend(ff_test_ids)
     
     return train_ids, test_ids
+
+# function to produce test metrics
+def get_metrics(df, actual, pred):
+    actual_val = df[actual]
+    pred_val = df[pred]
+    
+    conf_matrix = confusion_matrix(actual_val, pred_val)
+    acc_score = accuracy_score(actual_val, pred_val)
+    class_report = classification_report(actual_val, pred_val)
+
+    return conf_matrix, acc_score, class_report
