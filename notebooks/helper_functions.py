@@ -1,6 +1,6 @@
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
-from nltk.tokenize import regexp_tokenize
+from nltk.tokenize import regexp_tokenize, word_tokenize
 from collections import Counter
 import re
 import numpy as np
@@ -12,6 +12,13 @@ def get_stopwords():
     stop_words.extend(['chapter', 'mr', 'mrs', 'miss'])
 
     return stop_words
+
+# Function to remove stop words
+def remove_stop_words(text):
+    words = word_tokenize(text)
+    stop_words = get_stopwords()
+    filtered_text = [word for word in words if word.lower() not in stop_words]
+    return ' '.join(filtered_text)
 
 def remove_roman_numerals(text:str):
     '''
