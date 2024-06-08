@@ -2,6 +2,9 @@ from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 from nltk.tokenize import regexp_tokenize, word_tokenize
 from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from xgboost import XGBClassifier
 from collections import Counter
 import re
 import numpy as np
@@ -157,6 +160,91 @@ def split_by_id(df, ja_split:int, ff_split:int):
         test_ids.extend(ff_test_ids)
     
     return train_ids, test_ids
+
+# function to produce MultinomialNB models
+def mnb_model(df, text_col, class_col, vect):
+    # list to iterate over
+    ids = df['text#'].unique().tolist()
+
+    logo_list = []
+    item_count = 0
+
+    for id in ids:
+        train_ids = list(filter(lambda x: x != id, ids))
+        test_ids = [id]
+
+        # subset dataframe for test id
+        id_tokens = df[df['text#'] == id].copy()
+
+        # train-test-split
+        X_train = df[df['text#'].isin(train_ids)][text_col]
+        X_test = df[df['text#'].isin(test_ids)][text_col]
+        y_train = df[df['text#'].isin(train_ids)][class_col]
+        y_test = df[df['text#'].isin(test_ids)][class_col]
+
+        vect = vect
+
+        X_train_vec = vect.fit_transform(X_train)
+        X_test_vec = vect.transform(X_test)
+
+        nb = MultinomialNB().fit(X_train_vec, y_train)
+
+        y_pred = nb.predict(X_test_vec)
+        y_proba = nb.predict_proba(X_test_vec)
+
+        id_tokens['predictions'] = y_pred
+        id_tokens['probabilities'] = y_proba[:,1]
+
+        logo_list.append(id_tokens)
+        item_count += 1
+        print(f'text id: {id}, loop: {item_count}')
+
+    logo_df = pd.concat(logo_list)
+
+    return logo_df
+
+# XGBoost function
+def xgb_model(df, text_col, class_col, vect):
+    # list to iterate over
+    ids = df['text#'].unique().tolist()
+
+    logo_list = []
+    item_count = 0
+
+    for id in ids:
+        train_ids = list(filter(lambda x: x != id, ids))
+        test_ids = [id]
+
+        # subset dataframe for test id
+        id_tokens = df[df['text#'] == id].copy()
+
+        # train-test-split
+        X_train = df[df['text#'].isin(train_ids)][text_col]
+        X_test = df[df['text#'].isin(test_ids)][text_col]
+        y_train = df[df['text#'].isin(train_ids)][class_col]
+        y_test = df[df['text#'].isin(test_ids)][class_col]
+
+        vect = vect
+
+        X_train_vec = vect.fit_transform(X_train)
+        X_test_vec = vect.transform(X_test)
+
+        model = XGBClassifier(n_jobs = -1)
+        model.fit(X_train_vec, y_train)
+
+        y_pred = model.predict(X_test_vec)
+        y_proba = model.predict_proba(X_test_vec)
+
+        id_tokens['predictions'] = y_pred
+        id_tokens['probabilities'] = y_proba[:,1]
+
+        logo_list.append(id_tokens)
+        item_count += 1
+        print(f'text id: {id}, loop: {item_count}')
+
+    logo_df_xgb = pd.concat(logo_list)
+
+    return logo_df_xgb
 
 # function to produce test metrics
 def get_metrics(df, actual, pred):
