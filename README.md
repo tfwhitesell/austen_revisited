@@ -2,7 +2,7 @@
 
 ## Executive Summary
 
-The purpose of this project is to explore authorship attribution through a computational lens, comparing the performance of a Large Language Model (LLM) with various Natural Language Processing (NLP) methods. Authorship attribution is pivotal in verifying text authenticity, detecting plagiarism, and understanding authorial style. By analyzing the works of Jane Austen alongside selected fan works based on her books, the project aims to train models to distinguish between Austen's original writings and imitative fan works.
+The purpose of this project is to explore authorship attribution through a computational lens, comparing the performance of different Natural Language Processing (NLP) methods. Authorship attribution is pivotal in verifying text authenticity, detecting plagiarism, and understanding authorial style. By analyzing the works of Jane Austen alongside selected fan works based on her books, the project aims to train models to distinguish between Austen's original writings and imitative fan works.
 
 ## Motivation
 
